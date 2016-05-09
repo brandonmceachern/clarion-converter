@@ -56,6 +56,26 @@ Example:
           type: Date,
           notify: true,
           observer: '_julianTimeChanged'
+        },
+        clarionStringConverted: {
+          type: String,
+          notify: true
+        },
+        clarionJulianConverted: {
+          type: Date,
+          notify: true
+        },
+        julianClarionConverted: {
+          type: String,
+          notify: true
+        },
+        clarionJulianTime: {
+          type: String,
+          notify: true
+        },
+        julianClarionTime: {
+          type: String,
+          notify: true
         }
       },
 
@@ -70,10 +90,17 @@ Example:
           convertedDate = convertedDate * 86400 * 1000;
           //create new julian date
           var julianD = new Date(convertedDate);
-          //pass julian date to this
-          this.julianDate = julianD;
+          //month index to names
+          var monthNames = ["January", "February", "March",
+            "April", "May", "June", "July",
+            "August", "September", "October",
+            "November", "December"];
+          var day = julianD.getDate();
+          var monthIndex = julianD.getMonth();
+          var year = julianD.getFullYear();
+          this.clarionStringConverted = monthNames[monthIndex] + ' ' + day + ' ' + year;
         } else {
-          this.julianDate = "Invalid Date"
+          this.clarionStringConverted = "Invalid Date"
         }
       },
 
@@ -82,24 +109,34 @@ Example:
         var seconds = (clarionTime/100);
         var minutes = parseInt(seconds / 60) % 60;
         var hours = parseInt(seconds / 3600 ) % 24;
-        var tmp = new Date(this.julianDate);
+        var tmp = new Date();
         tmp.setMinutes(minutes);
         tmp.setHours(hours);
-        this.julianTime = tmp;
+        this.clarionJulianTime = tmp.toLocaleTimeString();
       },
 
       _julianDateChanged: function () {
-        var tmp = new Date(this.julianDate);
-        var clarionD = tmp.getTime();
-        clarionD = (clarionD/(1000*60*60*24));
-        clarionD = clarionD + 61729;
-        clarionD = Math.round(clarionD);
-        this.clarionDate = clarionD;
+        var tmp = this.julianDate;
+        if (tmp  !== "" ){
+          var tmp = new Date(this.julianDate);
+          var clarionD = tmp.getTime();
+          clarionD = (clarionD/(1000*60*60*24));
+          clarionD = clarionD + 61730;
+          clarionD = Math.round(clarionD);
+          this.julianClarionConverted = clarionD;
+        } else {
+          this.julianClarionConverted = "Date Unknown";
+        }
+
       },
 
-      _julianTimeChange: function () {
-        var tmp = new Date(this.julianTime);
-        console.log(tmp);
+      _julianTimeChanged: function () {
+        var tmp = this.julianTime;
+        var hours = tmp.substr(0,2);
+        hours = hours * 60 * 60 * 100;
+        var minutes = tmp.slice(3,5);
+        minutes = minutes * 60 * 100;
+        this.julianClarionTime = hours + minutes;
       }
 
     });
