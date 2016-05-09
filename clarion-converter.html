@@ -1,0 +1,107 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <clarion-converter clarion-date="{{clarionDate}}"></clarion-converter>
+
+Example:
+
+    <clarion-converter>
+      <h2>Hello clarion-converter</h2>
+    </clarion-converter>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="clarion-converter">
+  <template>
+    <style>
+    </style>
+  </template>
+  <script>
+    Polymer({
+      is: 'clarion-converter',
+
+      properties: {
+        clarionDate: {
+          type: Number,
+          notify: true,
+          observer: '_clarionDateChanged'
+        },
+        clarionTime: {
+          type: Number,
+          notify: true,
+          observer: '_clarionTimeChanged'
+        },
+        julianDate: {
+          type: Date,
+          notify: true,
+          observer: '_julianDateChanged'
+        },
+        julianTime: {
+          type: Date,
+          notify: true,
+          observer: '_julianTimeChanged'
+        }
+      },
+
+      _clarionDateChanged: function () {
+        //get current clarion date
+        var clarionD = this.clarionDate;
+        //check clarion date for value greater than day 1
+        if (clarionD > 61729){
+          //subtract the difference in clarion day 1 and julian day 1
+          var convertedDate = clarionD - 61729;
+          //go from centiseconds(clarion) to milliseconds(julian)
+          convertedDate = convertedDate * 86400 * 1000;
+          //create new julian date
+          var julianD = new Date(convertedDate);
+          //pass julian date to this
+          this.julianDate = julianD;
+        } else {
+          this.julianDate = "Invalid Date"
+        }
+      },
+
+      _clarionTimeChanged: function () {
+        var clarionTime = this.clarionTime;
+        var seconds = (clarionTime/100);
+        var minutes = parseInt(seconds / 60) % 60;
+        var hours = parseInt(seconds / 3600 ) % 24;
+        var tmp = new Date(this.julianDate);
+        tmp.setMinutes(minutes);
+        tmp.setHours(hours);
+        this.julianTime = tmp;
+      },
+
+      _julianDateChanged: function () {
+        var tmp = new Date(this.julianDate);
+        var clarionD = tmp.getTime();
+        clarionD = (clarionD/(1000*60*60*24));
+        clarionD = clarionD + 61729;
+        clarionD = Math.round(clarionD);
+        this.clarionDate = clarionD;
+      },
+
+      _julianTimeChange: function () {
+        var tmp = new Date(this.julianTime);
+        console.log(tmp);
+      }
+
+    });
+  </script>
+</dom-module>
