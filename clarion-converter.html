@@ -11,7 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../polymer/polymer.html">
 
 <!--
-An element providing a solution to no problem in particular.
+An element for converting clarion (TPS) values to julian.
 
 Example:
 
@@ -19,9 +19,31 @@ Example:
 
 Example:
 
-    <clarion-converter>
-      <h2>Hello clarion-converter</h2>
-    </clarion-converter>
+    <clarion-converter  clarion-date="{{clarionDate}}"
+                            clarion-time="{{clarionTime}}"
+                            julian-date="{{julianDate}}"
+                            julian-time="{{julianTime}}"
+                            clarion-string-converted="{{clarionStringConverted}}"
+                            julian-clarion-converted="{{julianClarionConverted}}"
+                            clarion-julian-time="{{clarionJulianTime}}"
+                            julian-clarion-time="{{julianClarionTime}}"></clarion-converter>
+
+        <div>Clarion Date</div>
+        <input bind-value="{{clarionDate}}" value="{{clarionDate::input}}">
+        Clarion ==> string date <b>[[clarionStringConverted]]</b>
+        <br>
+        <div>Julian Date</div>
+        <input type="date" bind-value="{{julianDate}}" value="{{julianDate::input}}">
+        Julian ==> Clarion <b>[[julianClarionConverted]]</b>
+        <br>
+        <div>Clarion Time</div>
+        <input bind-value="{{clarionTime}}" value="{{clarionTime::input}}">
+        Clarion Time ==> Julian Time <b>[[clarionJulianTime]]</b>
+        <br>
+        <div>Julian Time</div>
+        <input type="time" bind-value="{{julianTime}}" value="{{julianTime::input}}">
+        Julian Time ==> Clarion Time <b>[[julianClarionTime]]</b>
+        <br>
 
 @demo demo/index.html
 @hero hero.svg

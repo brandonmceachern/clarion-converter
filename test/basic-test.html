@@ -24,48 +24,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <!-- You can use the document as a place to set up your fixtures. -->
     <test-fixture id="clarion-converter-fixture">
       <template>
-        <clarion-converter>
-          <h2>clarion-converter</h2>
-        </clarion-converter>
+          <clarion-converter></clarion-converter>
       </template>
     </test-fixture>
 
     <script>
-      suite('<clarion-converter>', function() {
+        suite('<clarion-converter>', function() {
+            var myEl;
+            setup(function() {
+                myEl = fixture('clarion-converter-fixture');
+            });
+            test('defines the "clarionDate" property', function() {
+                assert.equal(myEl.clarion-date, '78884');
+            });
 
-        var myEl;
-
-        setup(function() {
-          myEl = fixture('clarion-converter-fixture');
         });
-
-        test('defines the "author" property', function() {
-          assert.equal(myEl.author.name, 'Dimitri Glazkov');
-          assert.equal(myEl.author.image, 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg');
-        });
-
-        test('says hello', function() {
-          assert.equal(myEl.sayHello(), 'clarion-converter says, Hello World!');
-
-          var greetings = myEl.sayHello('greetings Earthlings');
-          assert.equal(greetings, 'clarion-converter says, greetings Earthlings');
-        });
-
-        test('fires lasers', function(done) {
-          myEl.addEventListener('clarion-converter-lasers', function(event) {
-            assert.equal(event.detail.sound, 'Pew pew!');
-            done();
-          });
-          myEl.fireLasers();
-        });
-
-        test('distributed children', function() {
-          var els = myEl.getContentChildren();
-          assert.equal(els.length, 1, 'one distributed node');
-          assert.equal(els[0], myEl.querySelector('h2'), 'content distributed correctly');
-        });
-
-      });
     </script>
 
   </body>
