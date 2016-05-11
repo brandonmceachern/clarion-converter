@@ -1,0 +1,166 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+An element for converting clarion (TPS) values to julian.
+
+Example:
+
+    <clarion-converter clarion-date="{{clarionDate}}"></clarion-converter>
+
+Example:
+
+    <clarion-converter  clarion-date="{{clarionDate}}"
+                            clarion-time="{{clarionTime}}"
+                            julian-date="{{julianDate}}"
+                            julian-time="{{julianTime}}"
+                            clarion-string-converted="{{clarionStringConverted}}"
+                            julian-clarion-converted="{{julianClarionConverted}}"
+                            clarion-julian-time="{{clarionJulianTime}}"
+                            julian-clarion-time="{{julianClarionTime}}"></clarion-converter>
+
+        <div>Clarion Date</div>
+        <input bind-value="{{clarionDate}}" value="{{clarionDate::input}}">
+        Clarion ==> string date <b>[[clarionStringConverted]]</b>
+        <br>
+        <div>Julian Date</div>
+        <input type="date" bind-value="{{julianDate}}" value="{{julianDate::input}}">
+        Julian ==> Clarion <b>[[julianClarionConverted]]</b>
+        <br>
+        <div>Clarion Time</div>
+        <input bind-value="{{clarionTime}}" value="{{clarionTime::input}}">
+        Clarion Time ==> Julian Time <b>[[clarionJulianTime]]</b>
+        <br>
+        <div>Julian Time</div>
+        <input type="time" bind-value="{{julianTime}}" value="{{julianTime::input}}">
+        Julian Time ==> Clarion Time <b>[[julianClarionTime]]</b>
+        <br>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="clarion-converter">
+  <template>
+    <style>
+    </style>
+  </template>
+  <script>
+    Polymer({
+      is: 'clarion-converter',
+
+      properties: {
+        clarionDate: {
+          type: Number,
+          notify: true,
+          observer: '_clarionDateChanged'
+        },
+        clarionTime: {
+          type: Number,
+          notify: true,
+          observer: '_clarionTimeChanged'
+        },
+        julianDate: {
+          type: Date,
+          notify: true,
+          observer: '_julianDateChanged'
+        },
+        julianTime: {
+          type: Date,
+          notify: true,
+          observer: '_julianTimeChanged'
+        },
+        clarionStringConverted: {
+          type: String,
+          notify: true
+        },
+        clarionJulianConverted: {
+          type: Date,
+          notify: true
+        },
+        julianClarionConverted: {
+          type: String,
+          notify: true
+        },
+        clarionJulianTime: {
+          type: String,
+          notify: true
+        },
+        julianClarionTime: {
+          type: String,
+          notify: true
+        }
+      },
+
+      _clarionDateChanged: function () {
+        //get current clarion date
+        var clarionD = this.clarionDate;
+        //check clarion date for value greater than day 1
+        if (clarionD > 61729){
+          //subtract the difference in clarion day 1 and julian day 1
+          var convertedDate = clarionD - 61729;
+          //go from centiseconds(clarion) to milliseconds(julian)
+          convertedDate = convertedDate * 86400 * 1000;
+          //create new julian date
+          var julianD = new Date(convertedDate);
+          //month index to names
+          var monthNames = ["January", "February", "March",
+            "April", "May", "June", "July",
+            "August", "September", "October",
+            "November", "December"];
+          var day = julianD.getDate();
+          var monthIndex = julianD.getMonth();
+          var year = julianD.getFullYear();
+          this.clarionStringConverted = monthNames[monthIndex] + ' ' + day + ' ' + year;
+        } else {
+          this.clarionStringConverted = "Invalid Date"
+        }
+      },
+
+      _clarionTimeChanged: function () {
+        var clarionTime = this.clarionTime;
+        var seconds = (clarionTime/100);
+        var minutes = parseInt(seconds / 60) % 60;
+        var hours = parseInt(seconds / 3600 ) % 24;
+        var tmp = new Date();
+        tmp.setMinutes(minutes);
+        tmp.setHours(hours);
+        this.clarionJulianTime = tmp.toLocaleTimeString();
+      },
+
+      _julianDateChanged: function () {
+        var tmp = this.julianDate;
+        if (tmp  !== "" ){
+          var tmp = new Date(this.julianDate);
+          var clarionD = tmp.getTime();
+          clarionD = (clarionD/(1000*60*60*24));
+          clarionD = clarionD + 61730;
+          clarionD = Math.round(clarionD);
+          this.julianClarionConverted = clarionD;
+        } else {
+          this.julianClarionConverted = "Date Unknown";
+        }
+
+      },
+
+      _julianTimeChanged: function () {
+        var tmp = this.julianTime;
+        var hours = tmp.substr(0,2);
+        hours = hours * 60 * 60 * 100;
+        var minutes = tmp.slice(3,5);
+        minutes = minutes * 60 * 100;
+        this.julianClarionTime = hours + minutes;
+      }
+
+    });
+  </script>
+</dom-module>
